@@ -9,9 +9,8 @@ const opts = {
 
 passport.use(new JwtStrategy(opts, (jwt_payload, done) => {
     let email = jwt_payload.email;
-    console.log(email);
     if (email) {
-        return done(null, email);
+        return done(null, email); // email is passed to the next middleware, to access it 
     }
-    return done(null, false);
+    return done(null, false); 
 }));
