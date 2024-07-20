@@ -3,7 +3,10 @@ var router = express.Router();
 const bcrypt = require('bcryptjs');
 const {body, validationResult} = require('express-validator');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
+
 require('dotenv').config();
+require('../auth/validateToken');
 
 // =================== mongoDB setup ===================
 const mongoose = require('mongoose');
@@ -64,13 +67,11 @@ router.post('/api/user/login',
     }
     Users.findOne({email: req.body.email})
         .then(async (user) => {
-            console.log('I am here');
             if(user){
                 if(await bcrypt.compare(req.body.password, user.password)){
                     const tokenPayload = {
                         email: user.email
                     }
-                    console.log('I am here 2');
                     jwt.sign(
                       tokenPayload, 
                       process.env.SECRET,
@@ -95,6 +96,13 @@ router.post('/api/user/login',
     ).catch((error) => {
         res.status(500).send(`Error in .findOne: ${error}`);
     });
+});
+
+router.get('/api/private',  
+  passport.authenticate('jwt', {session: false}),
+  (req, res)=>{
+res.json({email: req.user});
+// not req.email, even though I sent return done(null, email) in validateToken.js
 });
 
 module.exports = router;
