@@ -73,7 +73,7 @@ router.post('/api/user/login',
                     console.log('I am here 2');
                     jwt.sign(
                       tokenPayload, 
-                      process.env.ACCESS_TOKEN_SECRET,
+                      process.env.SECRET,
                       {expiresIn: '1h'},
                       (error, token) => {
                           if(error){
